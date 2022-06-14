@@ -35,7 +35,7 @@ const transform: AxiosTransform = {
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     if (data.code) {
       // createMessage.error(data.message);
-      throw new Error(data.message);
+      return Promise.reject(new Error(data.message));
     }
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = data.code;
@@ -188,7 +188,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口地址
           apiUrl: '/api',
           // 接口拼接地址
-          urlPrefix: '/api',
+          urlPrefix: '',
           //  是否加入时间戳
           joinTime: false,
           // 忽略重复请求

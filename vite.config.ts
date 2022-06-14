@@ -3,6 +3,8 @@ import type { UserConfig, ConfigEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { loadEnv } from 'vite';
+import Components from 'unplugin-vue-components/vite';
+import { VantResolver } from 'unplugin-vue-components/resolvers';
 const base = './';
 function pathResolve(dir: string) {
   return resolve(process.cwd(), '.', dir);
@@ -16,7 +18,13 @@ export default ({ command, mode }: ConfigEnv) => {
   return {
     root,
     base,
-    plugins: [vue(), vueJsx()],
+    plugins: [
+      vue(),
+      vueJsx(),
+      Components({
+        resolvers: [VantResolver()]
+      })
+    ],
     resolve: {
       alias: [
         {
@@ -35,8 +43,7 @@ export default ({ command, mode }: ConfigEnv) => {
       proxy: {
         '/api': {
           target: 'https://osm.hitbb.cn',
-          changeOrigin: true,
-          rewrite: (path: any) => path.replace(/^\/api/, '')
+          changeOrigin: true
         }
       }
     }
