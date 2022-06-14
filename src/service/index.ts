@@ -7,6 +7,8 @@ import { isObject, isString } from '@/utils/is';
 import { setObjToUrlParams } from '@/utils';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { getToken } from '@/utils/auth';
+import { Toast } from 'vant';
+
 type Recordable<T = any> = {
   [x: string]: T;
 };
@@ -35,6 +37,10 @@ const transform: AxiosTransform = {
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     if (data.code) {
       // createMessage.error(data.message);
+      Toast({
+        message: data.message,
+        position: 'top'
+      });
       return Promise.reject(new Error(data.message));
     }
     // 这里逻辑可以根据项目进行修改
@@ -51,7 +57,6 @@ const transform: AxiosTransform = {
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
     }
-    console.log(config.url);
     if (apiUrl && isString(apiUrl)) {
       config.url = `${apiUrl}${config.url}`;
     }
@@ -119,6 +124,7 @@ const transform: AxiosTransform = {
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
+    console.log('err', error);
     const { code, message } = error || {};
     const errorMessageMode = message || 'none';
     const msg: string = message ?? '';
@@ -132,10 +138,12 @@ const transform: AxiosTransform = {
       if (err?.includes('Network Error')) {
         errMessage = '网络异常，请检查您的网络连接是否正常';
       }
+      if (code === 'ERR_BAD_REQUEST') {
+        Toast({ message: '未登录', position: 'top' });
+      }
 
       if (errMessage) {
         if (errorMessageMode === 'modal') {
-          console.log('cuowutis');
         } else if (errorMessageMode === 'message') {
         }
         return Promise.reject(error);

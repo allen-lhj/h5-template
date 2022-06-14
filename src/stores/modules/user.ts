@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { loginApi, getToken, getUserInfo } from '@/api/user';
+import { loginApi, getToken, getUserInfo, LogoutApi } from '@/api/user';
 import type { LoginParams, UserModel } from '@/api/model/user';
+import { Toast } from 'vant';
 interface userState {
   user: null | UserModel;
   roleList: [];
@@ -13,12 +14,14 @@ export const useUserStore = defineStore({
     roleList: [],
     token: ''
   }),
-  getters: {},
+  getters: {
+    getUserInfo(): UserModel | undefined {
+      if (this.user !== null) return this.user;
+    }
+  },
   actions: {
-    setUserInfo(info: UserModel) {
-      if (info) {
-        this.user = info;
-      }
+    setUserInfo(info: UserModel | null) {
+      this.user = info;
     },
     setToken(token: string) {
       this.token = token;
@@ -42,7 +45,7 @@ export const useUserStore = defineStore({
           });
       });
     },
-    getInfo() {
+    getInfo(): Promise<UserModel> {
       return new Promise((resolve, reject) => {
         getToken().then(({ token }) => {
           getUserInfo(token)
@@ -53,6 +56,14 @@ export const useUserStore = defineStore({
             .catch((error) => {
               reject(error);
             });
+        });
+      });
+    },
+    logout(): Promise<void> {
+      return new Promise((resolve, rejcet) => {
+        LogoutApi().then(() => {
+          this.setUserInfo(null);
+          resolve();
         });
       });
     }

@@ -54,10 +54,6 @@ export default defineComponent({
         await store.login(values);
         router.push('/');
       } catch (error) {
-        Toast.loading({
-          message: '登陆失败...',
-          forbidClick: true
-        });
         console.log(error);
       }
     };
