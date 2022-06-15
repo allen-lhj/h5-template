@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="body">
-      <div class="user-info-list">
+      <div class="card">
         <van-list>
           <van-cell title="姓名">{{ info.name }}</van-cell>
         </van-list>
@@ -51,11 +51,11 @@ import { useRouter } from 'vue-router';
 import bg1 from '@/assets/images/bg-img1.png';
 import bg2 from '@/assets/images/bg-img2.png';
 import Tabbar from '@/components/Tabbar/index.vue';
-import List from '@/components/List/index.vue';
 import { useUserStore } from '@/stores/modules/user';
 import type { UserModel, Info } from '@/api/model/user';
+import { Dialog } from 'vant';
 export default defineComponent({
-  components: { Tabbar, List },
+  components: { Tabbar },
   setup() {
     const info = ref<Info>({
       id: undefined,
@@ -87,6 +87,10 @@ export default defineComponent({
     };
     const hanldeLogout = async () => {
       try {
+        await Dialog.confirm({
+          title: '消息',
+          message: '是否确认退出'
+        });
         await useUserStore().logout();
         router.push('/login');
       } catch (error) {
@@ -102,6 +106,12 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+.card {
+  border-radius: 6px;
+  background-color: var(--yu-white-color);
+  box-shadow: var(--yu-border-shadow--light);
+  padding: 5px;
+}
 .user-section {
   background: var(--yu-gray-color--light);
   min-height: 100vh;

@@ -1,17 +1,16 @@
 import { defineStore } from 'pinia';
 import { loginApi, getToken, getUserInfo, LogoutApi } from '@/api/user';
 import type { LoginParams, UserModel } from '@/api/model/user';
-import { Toast } from 'vant';
 interface userState {
   user: null | UserModel;
-  roleList: [];
+  role: number | undefined;
   token: string;
 }
 export const useUserStore = defineStore({
   id: 'user',
   state: (): userState => ({
     user: null,
-    roleList: [],
+    role: undefined,
     token: ''
   }),
   getters: {
@@ -26,6 +25,12 @@ export const useUserStore = defineStore({
     setToken(token: string) {
       this.token = token;
     },
+    setRole(role: number | undefined) {
+      this.role = role;
+    },
+    getRole() {
+      return this.role;
+    },
     login(params: LoginParams) {
       return new Promise((resolve, reject) => {
         getToken()
@@ -34,6 +39,7 @@ export const useUserStore = defineStore({
             loginApi(params)
               .then((data) => {
                 this.setUserInfo(data);
+                this.setRole(data.user?.role)
                 resolve(data);
               })
               .catch((error) => {
@@ -51,6 +57,7 @@ export const useUserStore = defineStore({
           getUserInfo(token)
             .then((data: UserModel) => {
               this.setUserInfo(data);
+              this.setRole(data.user?.role)
               resolve(data);
             })
             .catch((error) => {
@@ -63,6 +70,7 @@ export const useUserStore = defineStore({
       return new Promise((resolve, rejcet) => {
         LogoutApi().then(() => {
           this.setUserInfo(null);
+          this.setRole(undefined);
           resolve();
         });
       });
