@@ -9,7 +9,10 @@ import {
   NavBar,
   List,
   DatetimePicker,
-  Picker
+  Picker,
+  Toast,
+  Popup,
+  Empty
 } from 'vant';
 
 export const registerGlobalComponent = (app: App) => {
@@ -23,5 +26,8 @@ export const registerGlobalComponent = (app: App) => {
     .use(NavBar)
     .use(DatetimePicker)
     .use(Picker)
+    .use(Popup)
+    .use(Empty)
+    .use(Toast)
     .use(List);
 };

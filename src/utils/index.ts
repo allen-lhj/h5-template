@@ -9,7 +9,7 @@ export function setObjToUrlParams(baseUrl: string, obj: any): string {
 
 export function parseTime(time: any, cFormat: string) {
   if (arguments.length === 0) {
-    return null;
+    return '';
   }
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}';
   let date;

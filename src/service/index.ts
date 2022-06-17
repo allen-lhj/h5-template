@@ -102,6 +102,13 @@ const transform: AxiosTransform = {
    * @description: 请求拦截器处理
    */
   requestInterceptors: (config, options) => {
+    const params = { ...config.params };
+    for (const key in params) {
+      if (params[key] === '') {
+        delete params[key];
+      }
+    }
+    config.params = params;
     // 请求之前处理config
     const token = getToken();
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
