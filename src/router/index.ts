@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '@/stores/modules/user';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import Layout from '../Layout/index.vue';
 NProgress.configure({ showSpinner: false });
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,7 +10,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: () => import('../views/home/index.vue')
+      component: Layout,
+      children: [
+        {
+          path: '',
+          name: 'Home',
+          component: () => import('../views/home/index.vue')
+        }
+      ]
     },
     {
       path: '/login',
@@ -19,7 +27,19 @@ const router = createRouter({
     {
       path: '/stat',
       name: 'Stat',
-      component: () => import('../views/stat/index.vue')
+      component: Layout,
+      children: [
+        {
+          path: '',
+          name: 'Stat',
+          component: () => import('../views/stat/index.vue')
+        }
+      ]
+    },
+    {
+      path: '/detail/:id',
+      name: 'HomeDetail',
+      component: () => import('../views/homeDetail/index.vue')
     },
     {
       path: '/my',

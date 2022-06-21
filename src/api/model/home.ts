@@ -7,13 +7,13 @@ export interface DeviceResultItem {
   com_id: number;
   company: string;
   dept: string;
-  dept_id: string;
+  dept_id: number;
   duty: string;
   duty_id: number;
   event: number;
   fatigue: number;
   focus: number;
-  id: string;
+  id: number;
   imei: string;
   location: Array<number>;
   lucidity: number;
@@ -37,4 +37,5 @@ export interface MonitorQuery {
   dept_id?: string;
   limit: number;
   page?: number;
+  showall?: number;
 }

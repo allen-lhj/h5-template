@@ -18,3 +18,5 @@ declare interface ViteEnv {
   VITE_USE_IMAGEMIN: boolean;
   VITE_GENERATE_UI: string;
 }
+
+declare const BMap: any;

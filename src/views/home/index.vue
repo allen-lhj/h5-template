@@ -7,72 +7,96 @@
       </div>
     </div>
     <div class="main">
-      <div class="table">
-        <div class="row">
-          <div class="cell">姓名</div>
-          <div class="cell">疲劳</div>
-          <div class="cell">静止</div>
-          <div class="cell">姿态</div>
-          <div class="cell">清醒</div>
-          <div class="cell">劳动量</div>
-          <div class="cell">姿态</div>
-          <div class="cell">跌落</div>
+      <router-link
+        v-for="item of listData"
+        :key="item.id"
+        :to="{
+          path: `/detail/${item.id}`,
+          query: { com_id: item.com_id, dept_id: item.dept_id, iemi: item.imei }
+        }"
+      >
+        <div class="card-list">
+          <div class="list-title">
+            {{
+              `姓名: ${item.name}  ${parseTime(item.modified, '{y}-{m}-{d} {h}:{i}:{s}')}的意识状态`
+            }}
+          </div>
+          <div class="list-content">
+            <div class="content-item">
+              <span class="data">{{ item.lucidity }}</span>
+              <span class="title">清醒度</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.fatigue }}</span>
+              <span class="title">疲劳度</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.focus }}</span>
+              <span class="title">专注度</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.silence }}</span>
+              <span class="title">静止度</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.attitude }}</span>
+              <span class="title">姿态</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.state }}</span>
+              <span class="title">体征</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.workload }}</span>
+              <span class="title">劳动量</span>
+            </div>
+            <div class="content-item">
+              <span class="data">{{ item.soc }}</span>
+              <span class="title">电量</span>
+            </div>
+          </div>
         </div>
-        <div class="row">
-          <div class="cell">张三三</div>
-          <div class="cell">30</div>
-          <div class="cell">27</div>
-          <div class="cell">100</div>
-          <div class="cell">20</div>
-          <div class="cell">49</div>
-          <div class="cell">99</div>
-          <div class="cell">89</div>
-        </div>
-        <div class="row">
-          <div class="cell">张三三</div>
-          <div class="cell">30</div>
-          <div class="cell">27</div>
-          <div class="cell">100</div>
-          <div class="cell">20</div>
-          <div class="cell">49</div>
-          <div class="cell">99</div>
-          <div class="cell">89</div>
-        </div>
-        <div class="row">
-          <div class="cell">张三三</div>
-          <div class="cell">30</div>
-          <div class="cell">27</div>
-          <div class="cell">100</div>
-          <div class="cell">20</div>
-          <div class="cell">49</div>
-          <div class="cell">99</div>
-          <div class="cell">89</div>
-        </div>
-      </div>
+      </router-link>
     </div>
-    <Tabbar />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, ref, reactive } from 'vue';
-import Tabbar from '@/components/Tabbar/index.vue';
+import { defineComponent, ref, reactive, watch } from 'vue';
 import filterSelect from '@/components/filterSelect/index.vue';
 import { NavBar } from 'vant';
 import { role } from '@/hook/role';
 import { getMonitorListApi } from '@/api/home';
 import type { DeviceResultItem } from '@/api/model/home';
+import { parseTime } from '@/utils';
+import { useRoute } from 'vue-router';
 export default defineComponent({
   name: 'Home',
-  components: { Tabbar, NavBar, filterSelect },
+  components: { NavBar, filterSelect },
   setup() {
+    const route = useRoute();
     const listData = ref<DeviceResultItem[] | undefined>(undefined);
     const listQuery = reactive({
       com_id: '',
       dept_id: '',
       limit: 20,
-      page: 1
+      page: 1,
+      showall: 0
     });
+    // Interface requests every seconds times
+    const t = ref<ReturnType<typeof setInterval> | undefined>(undefined);
+    watch(
+      () => route.name,
+      (name) => {
+        // route name no Home， stop request.
+        if (name !== 'Home') {
+          if (t.value) clearInterval(t.value);
+        } else {
+          t.value = setInterval(() => getListData(), 2000);
+        }
+      },
+      { deep: true, immediate: true }
+    );
     function comChange(id: string) {
       listQuery.com_id = id;
       getListData();
@@ -90,7 +114,7 @@ export default defineComponent({
       }
     };
 
-    return { role, comChange, deptChange, listData };
+    return { role, comChange, deptChange, listData, parseTime };
   }
 });
 </script>
@@ -100,29 +124,73 @@ export default defineComponent({
 .wrap {
   width: 100%;
   height: 100vh;
+  background: var(--yu-gray-color--light);
+  .header {
+    position: fixed;
+    height: 100px;
+    top: 0;
+    z-index: 1;
+    background: var(--yu-gray-color--light);
+    width: 100%;
+  }
   .main {
-    width: 375px;
+    position: absolute;
+    top: 100px;
+    bottom: 100px;
+    -webkit-overflow-scrolling: touch;
     overflow: auto;
-    .table {
-      display: table;
-      width: 475px;
-      border: 1px solid #ccc;
-      .row {
-        display: table-row;
-        border: 1px solid #ccc;
-        .cell {
-          display: table-cell;
-          border: 1px solid #ccc;
-          padding: 5px;
-          width: 60px;
-        }
-        .cell:first-child {
+    width: 100%;
+    height: 500px;
+    margin-bottom: 200px;
+    .card-list {
+      width: calc(100% - 25px);
+      margin: 5px auto;
+      border-radius: 6px;
+      background-color: var(--yu-white-color);
+      box-shadow: var(--yu-border-shadow--light);
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .list-title {
+        font-weight: bolder;
+        color: #000;
+        font-size: 14px;
+      }
+      .list-content {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        height: 60px;
+
+        .content-item {
           width: 80px;
-          position: sticky;
-          left: 0;
-          z-index: 1;
-          background: pink;
-          white-space: normal;
+          height: 40px;
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          border-right: 1px solid #c4c4c4;
+          border-top: 1px solid #c4c4c4;
+          padding: 2px;
+          .data {
+            font-size: 14px;
+            font-weight: bolder;
+            text-align: center;
+          }
+          .title {
+            font-size: 10px;
+            text-align: center;
+            color: #c4c4c4;
+          }
+        }
+        .content-item:nth-child(-n + 4) {
+          border-top: none;
+        }
+        .content-item:nth-child(4),
+        .content-item:nth-child(8) {
+          border-right: none;
         }
       }
     }

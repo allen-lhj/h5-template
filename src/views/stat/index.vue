@@ -13,7 +13,7 @@
     <div class="main">
       <div v-if="listData && listData?.length > 0">
         <div class="card" v-for="item in listData" :key="item.id">
-          <div class="card-content">
+          <div class="card-content" @click="clicktest(item.id)">
             <div class="content-header">
               {{ `${item.name}: ${parseTime(item.updated, '{y}-{m}-{d}')}的状态占比` }}
             </div>
@@ -56,7 +56,9 @@
                 <span class="title">脱帽</span>
               </div>
             </div>
-            <div class="content-footer">06月15日 11:31</div>
+            <div class="content-footer">
+              {{ parseTime(item.updated, '{h}:{i}:{s}') }}
+            </div>
           </div>
         </div>
       </div>
@@ -64,7 +66,6 @@
         <van-empty description="无数据" />
       </div>
     </div>
-    <Tabbar />
     <!-- date time picker  -->
     <van-popup v-model:show="isPickerShow" position="top" :style="{ height: '30%' }">
       <van-datetime-picker
@@ -80,14 +81,13 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from 'vue';
 import { NavBar } from 'vant';
-import Tabbar from '@/components/Tabbar/index.vue';
 import filterSelect from '@/components/filterSelect/index.vue';
 import { parseTime } from '@/utils';
 import { fetchStatList } from '@/api/stat';
 import type { statusItem } from '@/api/model/stat';
 export default defineComponent({
   name: 'Stat',
-  components: { Tabbar, NavBar, filterSelect },
+  components: { NavBar, filterSelect },
   setup() {
     let listData = ref<statusItem[] | undefined>(undefined);
     const listQuery = reactive({
@@ -131,7 +131,11 @@ export default defineComponent({
       isPickerShow.value = false;
       getListData();
     };
+    function clicktest(id: number) {
+      console.log(id);
+    }
     return {
+      clicktest,
       isPickerShow,
       comChange,
       deptChange,
@@ -167,7 +171,6 @@ export default defineComponent({
     }
   }
   .main {
-    margin: 100px auto;
     -webkit-overflow-scrolling: touch;
     overflow: auto;
     width: 100%;
