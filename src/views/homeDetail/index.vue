@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { NavBar } from 'vant';
 import HomeMap from '@/components/Map/index.vue';
 import { useRoute } from 'vue-router';
@@ -27,13 +27,18 @@ export default defineComponent({
     const es = ref<EventSource | null>(null);
     onMounted(() => {
       const query = route.query;
-      const url = `/api/status?com_id=${query.com_id}&dept_id=${query.dept_id}&imei=${query.imei}`;
+      const url = `/api/status?com_id=${query.com_id}&dept_id=${query.dept_id}&imei=${query.iemi}`;
       es.value = new EventSource(url);
       es.value.addEventListener('update', (event: any) => {
         const data = JSON.parse(event.data);
         console.log(data);
       });
     });
+
+    onUnmounted(() => {
+      es.value?.close();
+      es.value = null;
+    })
   }
 });
 </script>
