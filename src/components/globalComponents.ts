@@ -11,6 +11,7 @@ import {
   DatetimePicker,
   Picker,
   Toast,
+  Loading,
   Popup,
   Empty
 } from 'vant';
@@ -28,6 +29,7 @@ export const registerGlobalComponent = (app: App) => {
     .use(Picker)
     .use(Popup)
     .use(Empty)
+    .use(Loading)
     .use(Toast)
     .use(List);
 };

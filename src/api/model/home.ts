@@ -39,3 +39,26 @@ export interface MonitorQuery {
   page?: number;
   showall?: number;
 }
+
+export interface DeviceRealTimeData {
+  lucidity: number;
+  calm: number;
+  seq: number;
+  soc: number;
+  ts: number;
+  sigqu: number;
+  fatigue: number;
+  state: number;
+  fall: number;
+  lng: number;
+  mode: number;
+  cautel: number;
+  attitude: number;
+  focus: number;
+  workload: number;
+  lat: number;
+  boots: number;
+  rssi: number;
+  silence: number;
+  workcmpx: number;
+}
