@@ -35,7 +35,7 @@ export type DeviceResult = BasicFetchResult<DeviceResultItem>;
 export interface MonitorQuery {
   com_id?: string;
   dept_id?: string;
-  limit: number;
+  limit?: number;
   page?: number;
   showall?: number;
 }
