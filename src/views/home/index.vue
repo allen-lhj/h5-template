@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch, onMounted } from 'vue';
+import { defineComponent, ref, reactive, onMounted } from 'vue';
 
 import Dropdown from '@/components/DropdownMenu/index.vue';
 import { NavBar } from 'vant';
@@ -71,6 +71,7 @@ import { getMonitorListApi } from '@/api/home';
 import type { DeviceResultItem } from '@/api/model/home';
 import { parseTime } from '@/utils';
 import { timerRequest } from '@/hook/watchRouteTimer';
+import {test} from './effect/useVideoEffect'
 export default defineComponent({
   name: 'Home',
   components: { NavBar, Dropdown },
@@ -85,6 +86,7 @@ export default defineComponent({
     });
     onMounted(() => {
       timerRequest('Home', getListData);
+      test()
     });
     function comChange(id: string) {
       listQuery.com_id = id;
