@@ -3,7 +3,7 @@
     <div class="header">
       <NavBar title="监控" />
       <div class="filter-container">
-        <filterSelect @com_id="comChange" @dept_id="deptChange" />
+        <Dropdown :listQuery="listQuery" @com_id="comChange" @dept_id="deptChange" />
       </div>
     </div>
     <div class="main">
@@ -62,41 +62,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue';
-import filterSelect from '@/components/filterSelect/index.vue';
+import { defineComponent, ref, reactive, watch, onMounted } from 'vue';
+
+import Dropdown from '@/components/DropdownMenu/index.vue';
 import { NavBar } from 'vant';
 import { role } from '@/hook/role';
 import { getMonitorListApi } from '@/api/home';
 import type { DeviceResultItem } from '@/api/model/home';
 import { parseTime } from '@/utils';
-import { useRoute } from 'vue-router';
+import { timerRequest } from '@/hook/watchRouteTimer';
 export default defineComponent({
   name: 'Home',
-  components: { NavBar, filterSelect },
+  components: { NavBar, Dropdown },
   setup() {
-    const route = useRoute();
     const listData = ref<DeviceResultItem[] | undefined>(undefined);
     const listQuery = reactive({
       com_id: '',
       dept_id: '',
-      limit: 20,
+      limit: 30,
       page: 1,
       showall: 0
     });
-    // Interface requests every seconds times
-    const t = ref<ReturnType<typeof setInterval> | undefined>(undefined);
-    watch(
-      () => route.name,
-      (name) => {
-        // route name no Home， stop request.
-        if (name !== 'Home') {
-          if (t.value) clearInterval(t.value);
-        } else {
-          t.value = setInterval(() => getListData(), 2000);
-        }
-      },
-      { deep: true, immediate: true }
-    );
+    onMounted(() => {
+      timerRequest('Home', getListData);
+    });
     function comChange(id: string) {
       listQuery.com_id = id;
       getListData();
@@ -114,7 +103,7 @@ export default defineComponent({
       }
     };
 
-    return { role, comChange, deptChange, listData, parseTime };
+    return { role, listQuery, comChange, deptChange, listData, parseTime };
   }
 });
 </script>

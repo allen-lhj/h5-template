@@ -12,7 +12,9 @@
       class="filter-department"
       @click="isDeptPickerShow = !isDeptPickerShow"
     >
-      <p class="filter-text">{{ departmentText !== '' ? departmentText : '选择部门' }}</p>
+      <p class="filter-text">
+        {{ departmentText !== '' ? departmentText : '选择部门' }}
+      </p>
     </div>
     <van-popup v-model:show="isComPickerShow" position="bottom" :style="{ height: '40%' }">
       <van-picker
@@ -87,7 +89,7 @@ export default defineComponent({
 @import url(../../style/public.less);
 .select {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 .filter-company,
 .filter-department {
@@ -95,5 +97,16 @@ export default defineComponent({
 }
 .filter-text {
   .filter-text();
+}
+.icon-triangle-dowm {
+  line-height: 30px;
+  width: 0;
+  height: 0;
+  border: 4px solid #000;
+  border-left-color: transparent;
+  //_ border-left-color: #f00;
+  border-right-color: transparent;
+  //_ border-right-color: #f00;
+  border-bottom: none;
 }
 </style>

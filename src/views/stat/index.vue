@@ -6,7 +6,13 @@
         <div class="filter-time" @click="isPickerShow = !isPickerShow">
           {{ parseTime(currentDate, '{y}-{m}-{d}') }}
         </div>
-        <filterSelect @com_id="comChange" @dept_id="deptChange" />
+        <!-- <filterSelect @com_id="comChange" @dept_id="deptChange" /> -->
+        <Dropdown
+          class="dropdown"
+          :listQuery="listQuery"
+          @com_id="comChange"
+          @dept_id="deptChange"
+        />
       </div>
     </div>
 
@@ -84,10 +90,11 @@ import { NavBar } from 'vant';
 import filterSelect from '@/components/filterSelect/index.vue';
 import { parseTime } from '@/utils';
 import { fetchStatList } from '@/api/stat';
+import Dropdown from '@/components/DropdownMenu/index.vue';
 import type { statusItem } from '@/api/model/stat';
 export default defineComponent({
   name: 'Stat',
-  components: { NavBar, filterSelect },
+  components: { NavBar, Dropdown },
   setup() {
     let listData = ref<statusItem[] | undefined>(undefined);
     const listQuery = reactive({
@@ -142,7 +149,8 @@ export default defineComponent({
       currentDate,
       listData,
       parseTime,
-      handleDate
+      handleDate,
+      listQuery
     };
   }
 });
@@ -162,11 +170,20 @@ export default defineComponent({
     background: var(--yu-gray-color--light);
     .filter-container {
       display: flex;
-      justify-content: space-around;
-      margin-top: 2px;
-      padding: 10px;
       .filter-time {
-        .selects();
+        background-color: var(--yu-white-color);
+        box-shadow: var(--yu-border-shadow--light);
+        width: 100px;
+        height: 48px;
+        // padding: 3px 10px;
+        line-height: 48px;
+        text-align: center;
+        font-size: 14px;
+        color: #9fa5ac;
+        font-weight: bolder;
+      }
+      .dropdown {
+        flex: 1;
       }
     }
   }
@@ -176,7 +193,7 @@ export default defineComponent({
     width: 100%;
     .card {
       width: calc(100% - 25px);
-      margin: 5px auto;
+      margin: 100px auto;
       border-radius: 6px;
       background-color: var(--yu-white-color);
       box-shadow: var(--yu-border-shadow--light);

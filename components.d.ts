@@ -7,6 +7,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Charts: typeof import('./src/components/Charts/index.vue')['default']
     DetailCharts: typeof import('./src/components/DetailCharts/index.vue')['default']
+    DropdownMenu: typeof import('./src/components/DropdownMenu/index.vue')['default']
     FilterSelect: typeof import('./src/components/filterSelect/index.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
@@ -26,6 +27,8 @@ declare module '@vue/runtime-core' {
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanDatePicker: typeof import('vant/es')['DatePicker']
     VanDatetimePicker: typeof import('vant/es')['DatetimePicker']
+    VanDropdownItem: typeof import('vant/es')['DropdownItem']
+    VanDropdownMenu: typeof import('vant/es')['DropdownMenu']
     VanEmpty: typeof import('vant/es')['Empty']
     VanField: typeof import('vant/es')['Field']
     VanForm: typeof import('vant/es')['Form']

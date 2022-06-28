@@ -13,7 +13,9 @@ import {
   Toast,
   Loading,
   Popup,
-  Empty
+  Empty,
+  DropdownMenu,
+  DropdownItem
 } from 'vant';
 
 export const registerGlobalComponent = (app: App) => {
@@ -23,6 +25,8 @@ export const registerGlobalComponent = (app: App) => {
     .use(CellGroup)
     .use(Form)
     .use(Tabbar)
+    .use(DropdownMenu)
+    .use(DropdownItem)
     .use(TabbarItem)
     .use(NavBar)
     .use(DatetimePicker)

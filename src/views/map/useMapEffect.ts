@@ -14,7 +14,7 @@ export const listQuery = reactive({
 
 export const useFetchCoreDataEffect = () => {
   const distributeData = ref<DeviceResultItem[]>([]);
-  const fetchCoreData = async (listQuery: Query) => {
+  const fetchCoreData = async () => {
     const { items } = await getMonitorListApi(listQuery);
     distributeData.value = items;
   };
