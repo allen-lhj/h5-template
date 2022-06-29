@@ -24,6 +24,8 @@ export type UserModel = {
     host: string;
     port: number;
   };
+  sw_pwd?: undefined | string;
+  sw_user?: undefined | string;
   user?: Info;
   detail?: string;
 };

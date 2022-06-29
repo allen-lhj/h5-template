@@ -20,3 +20,9 @@ declare interface ViteEnv {
 }
 
 declare const BMap: any;
+declare global {
+  interface Window {
+    jSW: any;
+  }
+}
+export {};
