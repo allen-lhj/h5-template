@@ -61,10 +61,26 @@
         </div>
         <!-- </router-link> -->
 
-        <div v-if="videoBtn && item.swdev" class="card-right">
+        <div v-if="videoBtn && item.swdev" class="card-right" @click="checkVideo(item.id)">
           <img class="card-img" src="../../assets/images/video.png" alt="" />
         </div>
       </div>
+    </div>
+    <div class="video-el">
+      <div class="video-box">
+        <van-loading
+          style="width: 30px; margin: 0 auto; z-index: 99; position: absolute; top: 50%; left: 49%"
+          v-show="videoLoading"
+          type="spinner"
+          color="#0094ff"
+        />
+      </div>
+      <img
+        @click="closeVideo"
+        class="turn-off-phone"
+        src="../../assets/images/offphone.png"
+        alt=""
+      />
     </div>
   </div>
 </template>
@@ -75,17 +91,21 @@ import { defineComponent, ref, reactive, onMounted } from 'vue';
 import Dropdown from '@/components/DropdownMenu/index.vue';
 import { NavBar } from 'vant';
 import { role } from '@/hook/role';
-import { getMonitorListApi } from '@/api/home';
+import { getMonitorListApi, getDeviceVideoServiceInfo } from '@/api/home';
 import type { DeviceResultItem } from '@/api/model/home';
 import { parseTime } from '@/utils';
 import { timerRequest } from '@/hook/watchRouteTimer';
-import { swInit, videoBtn } from './effect/useVideoEffect';
+import { swInit, videoBtn, searchDevice, searchDeviceList } from './effect/useVideoEffect';
 import { useRouter } from 'vue-router';
+import { Dialog } from 'vant';
+import { useVideoStore } from '@/stores/modules/video';
+import { VideoEnum } from '@/enums/httpEnum';
 export default defineComponent({
   name: 'Home',
   components: { NavBar, Dropdown },
   setup() {
     const loading = ref(true);
+    const videoLoading = ref(true);
     const listData = ref<DeviceResultItem[] | undefined>(undefined);
     const listQuery = reactive({
       com_id: '',
@@ -98,9 +118,12 @@ export default defineComponent({
       loading.value = true;
       timerRequest('Home', getListData);
       if (role !== 1) {
-        swInit();
+        swInit().then(() => {
+          searchDeviceList();
+        });
       }
     });
+
     function comChange(id: string) {
       listQuery.com_id = id;
       getListData();
@@ -126,8 +149,77 @@ export default defineComponent({
         query: { com_id: item.com_id, dept_id: item.dept_id, iemi: item.imei }
       });
     };
+    const videoStore = useVideoStore();
+    const checkVideo = (id: number) => {
+      Dialog.confirm({
+        title: '提示',
+        message: '是否进行视频通话'
+      })
+        .then(async () => {
+          try {
+            videoLoading.value = true;
+            const { puid } = await getDeviceVideoServiceInfo(id);
+            searchDevice(puid);
+            const videoEl = document.getElementsByClassName('video-el')[0] as HTMLElement;
+            const videoBox = document.getElementsByClassName('video-box')[0] as HTMLElement;
+            videoEl.style.display = 'block';
+            setTimeout(() => {
+              videoStore.$state.channel.swOpenEx({
+                ismuti: false,
+                div: videoBox,
+                // bstretch: true,
+                prototype: 'httpflv',
+                media: 10,
+                bstretch: true,
+                callback: (options: any, response: any) => {
+                  if (response.emms.code === VideoEnum.RC_CODE_S_OK) {
+                    videoLoading.value = false;
+                    // videoConfig.loading = false;
+                  } else {
+                    // videoConfig.noPlay = true;
+                    switch (response.emms.code) {
+                      case VideoEnum.RC_CODE_E_FAIL:
+                        // createMessage.error('失败');
+                        break;
+                      case VideoEnum.RC_CODE_E_NOTFOUND:
+                        // createMessage.error('未找到');
+                        break;
+                      case VideoEnum.RC_CODE_E_BUSY:
+                        // createMessage.error('繁忙');
+                        break;
+                      case VideoEnum.RC_CODE_E_TIMEOUT:
+                        // createMessage.error('超时');
+                        break;
+                      case VideoEnum.RC_CODE_E_DISCONNECTED:
+                        // createMessage.error('未连接');
+                        break;
+                    }
+                  }
+                }
+              });
+            }, 3000);
+          } catch (error) {
+            console.log(error);
+          }
+        })
+        .catch(() => {
+          // on cancel
+        });
+    };
+    function closeVideo() {
+      if (videoStore.$state.channel) {
+        videoStore.$state.channel.swClose();
+      }
+      videoStore.$state.channel = null;
+      const videoEl = document.getElementsByClassName('video-el')[0] as HTMLElement;
+      videoEl.style.display = 'none';
+      return true;
+    }
 
     return {
+      videoLoading,
+      closeVideo,
+      checkVideo,
       role,
       videoBtn,
       hanldeToDetail,
@@ -148,6 +240,26 @@ export default defineComponent({
   width: 100%;
   height: 100vh;
   background: var(--yu-gray-color--light);
+  .video-el {
+    position: relative;
+    display: none;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    z-index: 999;
+    .video-box {
+      width: 100%;
+      height: 70vh;
+    }
+    .turn-off-phone {
+      position: absolute;
+      bottom: 20%;
+      left: calc(50% - 32px);
+      width: 64px;
+      height: 64px;
+      margin: 0 auto;
+    }
+  }
   .header {
     position: fixed;
     height: 100px;

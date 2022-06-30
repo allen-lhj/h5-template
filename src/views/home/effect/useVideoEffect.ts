@@ -85,6 +85,22 @@ export function swInit() {
   });
 }
 
+export function searchDeviceList() {
+  if (videoStore.$state.session !== null) {
+    videoStore.$state.session.swSearchPuList({
+      iPosition: 0,
+      iCount: 100,
+      stFilter: {
+        iOnlineStatus: 0,
+        iTimeBegin: 0,
+        iTimeEnd: 0,
+        szIDOrName: null
+      },
+      callback: () => {}
+    });
+  }
+}
+
 export function searchDevice(puid: any) {
   videoStore.$state.channel = videoStore.$state.session.swGetPuChanel(puid, 0);
 }

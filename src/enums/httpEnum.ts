@@ -30,3 +30,11 @@ export enum ContentTypeEnum {
   // form-data  upload
   FORM_DATA = 'multipart/form-data;charset=UTF-8'
 }
+export enum VideoEnum {
+  RC_CODE_S_OK = 0,
+  RC_CODE_E_FAIL = -1, // 一般错误
+  RC_CODE_E_NOTFOUND = -5, // 未找到
+  RC_CODE_E_BUSY = -7, // 繁忙
+  RC_CODE_E_TIMEOUT = -9, // 超时
+  RC_CODE_E_DISCONNECTED = -11 // 未连接
+}
