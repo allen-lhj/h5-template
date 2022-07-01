@@ -36,5 +36,6 @@ export enum VideoEnum {
   RC_CODE_E_NOTFOUND = -5, // 未找到
   RC_CODE_E_BUSY = -7, // 繁忙
   RC_CODE_E_TIMEOUT = -9, // 超时
-  RC_CODE_E_DISCONNECTED = -11 // 未连接
+  RC_CODE_E_DISCONNECTED = -11, // 未连接
+  RC_CODE_E_BVCU_NOTFOUND = 20106
 }

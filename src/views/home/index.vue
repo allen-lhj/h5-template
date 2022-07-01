@@ -89,7 +89,7 @@
 import { defineComponent, ref, reactive, onMounted } from 'vue';
 
 import Dropdown from '@/components/DropdownMenu/index.vue';
-import { NavBar } from 'vant';
+import { NavBar, Toast, Dialog } from 'vant';
 import { role } from '@/hook/role';
 import { getMonitorListApi, getDeviceVideoServiceInfo } from '@/api/home';
 import type { DeviceResultItem } from '@/api/model/home';
@@ -97,7 +97,6 @@ import { parseTime } from '@/utils';
 import { timerRequest } from '@/hook/watchRouteTimer';
 import { swInit, videoBtn, searchDevice, searchDeviceList } from './effect/useVideoEffect';
 import { useRouter } from 'vue-router';
-import { Dialog } from 'vant';
 import { useVideoStore } from '@/stores/modules/video';
 import { VideoEnum } from '@/enums/httpEnum';
 export default defineComponent({
@@ -174,26 +173,32 @@ export default defineComponent({
                 callback: (options: any, response: any) => {
                   if (response.emms.code === VideoEnum.RC_CODE_S_OK) {
                     videoLoading.value = false;
-                    // videoConfig.loading = false;
                   } else {
-                    // videoConfig.noPlay = true;
+                    let message = '连接错误';
                     switch (response.emms.code) {
                       case VideoEnum.RC_CODE_E_FAIL:
-                        // createMessage.error('失败');
+                        message = '连接失败';
+                        break;
+                      case VideoEnum.RC_CODE_E_BVCU_NOTFOUND:
                         break;
                       case VideoEnum.RC_CODE_E_NOTFOUND:
-                        // createMessage.error('未找到');
+                        message = '未找到设备';
                         break;
                       case VideoEnum.RC_CODE_E_BUSY:
-                        // createMessage.error('繁忙');
+                        message = '设备繁忙';
                         break;
                       case VideoEnum.RC_CODE_E_TIMEOUT:
-                        // createMessage.error('超时');
+                        message = '连接超时';
                         break;
                       case VideoEnum.RC_CODE_E_DISCONNECTED:
-                        // createMessage.error('未连接');
+                        message = '设备未连接';
                         break;
                     }
+                    Toast({
+                      message: message,
+                      position: 'top'
+                    });
+                    closeVideo();
                   }
                 }
               });
@@ -239,7 +244,7 @@ export default defineComponent({
 .wrap {
   width: 100%;
   height: 100vh;
-  background: var(--yu-gray-color--light);
+  background: #f4f4f4;
   .video-el {
     position: relative;
     display: none;
@@ -293,7 +298,7 @@ export default defineComponent({
         flex-direction: column;
         justify-content: space-between;
         .list-title {
-          font-weight: bolder;
+          // font-weight: bolder;
           color: #000;
           font-size: 14px;
         }
@@ -318,6 +323,7 @@ export default defineComponent({
               font-size: 14px;
               font-weight: bolder;
               text-align: center;
+              color: #ff4e50;
             }
             .title {
               font-size: 10px;
